@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fashion Forward Hub - AI Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>👔 Fashion Forward Hub</h1>
+            <p>Your AI Fashion Assistant</p>
+            <div class="controls">
+                <span id="userEmail" style="margin-right: 15px; opacity: 0.9;"></span>
+                
+                <!-- RAG Toggle -->
+                <label class="control-group">
+                    <input type="checkbox" id="useRag" checked>
+                    <span>Use RAG</span>
+                </label>
+                
+                <!-- Retriever Type -->
+                <label class="control-group">
+                    <span>Retriever:</span>
+                    <select id="retrieverType">
+                        <option value="semantic">Semantic</option>
+                        <option value="bm25">BM25</option>
+                        <option value="hybrid">Hybrid</option>
+                    </select>
+                </label>
+                
+                <!-- Simplified Mode -->
+                <label class="control-group">
+                    <input type="checkbox" id="simplifiedMode">
+                    <span>Simplified</span>
+                </label>
+                
+                <!-- Top K -->
+                <label class="control-group">
+                    <span>Top K:</span>
+                    <input type="number" id="topK" value="20" min="1" max="100" style="width: 60px;">
+                </label>
+                
+                <!-- Hybrid Parameters (hidden by default) -->
+                <div id="hybridControls" style="display: none;">
+                    <label class="control-group">
+                        <span>Alpha:</span>
+                        <input type="number" id="alpha" value="0.5" min="0" max="1" step="0.1" style="width: 60px;">
+                    </label>
+                    <label class="control-group">
+                        <span>K:</span>
+                        <input type="number" id="rffK" value="60" min="1" max="100" style="width: 60px;">
+                    </label>
+                </div>
+                
+                <!-- Reranker -->
+                <label class="control-group">
+                    <input type="checkbox" id="useReranker">
+                    <span>Rerank</span>
+                </label>
+
+                <!-- Rerank Query (hidden by default) -->
+                <div id="rerankControls" style="display: none;">
+                    <label class="control-group">
+                        <span>Rerank Query:</span>
+                        <input type="text" id="rerankQuery" placeholder="Optional query..." style="width: 150px;">
+                    </label>
+                </div>
+                
+                <button id="clearBtn" class="btn-secondary">Clear</button>
+                <button onclick="logout()" class="btn-secondary">Logout</button>
+            </div>
+        </header> 
+
+        <div class="chat-container" id="chatContainer">
+            <div class="message bot-message">
+                <div class="message-content">
+                    <strong>Assistant:</strong>
+                    <p>Hi! How can I help you today? 👋</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="config-display" id="configDisplay">
+            <span>🔧 <strong>Config:</strong></span>
+            <span id="configText">RAG: On | Retriever: Semantic | Top K: 20</span>
+        </div>
+
+        <div class="input-container">
+            <textarea 
+                id="messageInput" 
+                placeholder="Ask about products, returns, shipping..." 
+                rows="2"
+            ></textarea>
+            <button id="sendBtn" class="btn-primary">
+                <span id="btnText">Send</span>
+                <span id="btnLoader" class="loader" style="display:none;"></span>
+            </button>
+        </div>
+
+        <div class="stats" id="stats">
+            <span>Total Tokens: <strong id="totalTokens">0</strong></span>
+            <span>Last Query: <strong id="lastTokens">0</strong></span>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+</body>
+</html>
