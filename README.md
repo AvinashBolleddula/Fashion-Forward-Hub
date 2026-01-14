@@ -455,7 +455,7 @@ python scripts/load_faqs.py
 
 ### Run the Flask Application
 ```bash
-python src/interface/web_app.py
+python src/database.py
 ```
 You should see output similar to:
 ```bash
