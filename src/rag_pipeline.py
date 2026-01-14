@@ -295,11 +295,19 @@ def generate_products_layout(products: List) -> str:
     layout = ""
     for product in products:
         props = product.properties
-        layout += (f"Product ID: {props['product_id']}. "
-                  f"Product name: {props['productDisplayName']}. "
-                  f"Product Color: {props['baseColour']}. "
-                  f"Product Season: {props['season']}. "
-                  f"Product Year: {props['year']}.\n")
+        # Format price
+        price = props.get('price', 'N/A')
+        price_str = f"${price:.2f}" if isinstance(price, (int, float)) else price
+
+        layout += f"   • Name: {props.get('productDisplayName', 'Unknown Product')}\n"
+        layout += f"   • Product ID: {props.get('product_id', 'N/A')}\n"
+        layout += f"   • Price: {price_str}\n"
+        layout += f"   • Color: {props.get('baseColour', 'N/A')}\n"
+        layout += f"   • For: {props.get('gender', 'N/A')}\n"
+        layout += f"   • Type: {props.get('articleType', 'N/A')}\n"
+        layout += f"   • Usage: {props.get('usage', 'N/A')}\n"
+        layout += f"   • Season: {props.get('season', 'N/A')}\n"
+        layout += "\n"
     return layout
 
 
@@ -345,16 +353,25 @@ def query_on_products(
         products_layout = generate_products_layout(products)
         
         # Create prompt
-        PROMPT = f"""You are a helpful fashion assistant. You will be provided with a list of products from our catalog.
-Based on these products, answer the user's query. Provide specific product recommendations with their IDs and names.
+        PROMPT = f"""You are a helpful fashion assistant for an e-commerce store.
+
+Below is a list of products from our catalog that match the customer's query.
+Each product includes: name, price, color, gender, type, usage, and season.
+
+Your task:
+1. Recommend the BEST products based on the customer's needs
+2. Explain WHY each product is a good match
+3. Mention specific details like price, color, and usage
+4. Be enthusiastic and helpful
+5. If asking about price, always mention the exact price
 
 <PRODUCTS>
 {products_layout}
 </PRODUCTS>
 
-User Query: {query}
+Customer Query: {query}
 
-Provide helpful recommendations based on the available products above."""
+Provide detailed, personalized recommendations with specific product details."""
         
         # Generate parameters dict
         params = generate_params_dict(PROMPT, **kwargs)

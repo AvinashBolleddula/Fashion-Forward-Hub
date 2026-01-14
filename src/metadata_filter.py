@@ -172,29 +172,41 @@ def generate_metadata_from_query(query: str) -> Tuple[str, int]:
     
         # Construct prompt for LLM
         PROMPT = f"""
-    One query will be provided. For the given query, there will be a call on vector database to query relevant cloth items. 
-    Generate a JSON with useful metadata to filter the products in the query. Possible values for each feature is in the following json: {values}
+One query will be provided. For the given query, there will be a call on vector database to query relevant cloth items. 
+Generate a JSON with useful metadata to filter the products in the query. Possible values for each feature is in the following json: {values}
 
-    Provide a JSON with the features that best fit in the query (can be more than one, write in a list). Also, if present, add a price key, saying if there is a price range (between values, greater than or smaller than some value).
-    Only return the JSON, nothing more. price key must be a json with "min" and "max" values (0 if no lower bound and inf if no upper bound). 
-    Always include gender, masterCategory, articleType, baseColour, price, usage and season as keys. All values must be within lists.
-    If there is no price set, add min = 0 and max = inf.
-    Only include values that are given in the json above. 
+IMPORTANT: Only include filters that are EXPLICITLY mentioned or strongly implied in the query.
+- If no gender mentioned, omit "gender"
+- If no specific usage mentioned, omit "usage"  
+- If no season mentioned, omit "season"
+- masterCategory should only be included if explicitly mentioned
 
-    Example of expected JSON:
+Provide a JSON with the features that best fit in the query. Also, if present, add a price key, saying if there is a price range.
+Only return the JSON, nothing more. price key must be a json with "min" and "max" values (0 if no lower bound and inf if no upper bound). 
+All values must be within lists (except price).
+If there is no price set, add min = 0 and max = inf.
+Only include values that are given in the json above.
 
-    {{
-    "gender": ["Women"],
-    "masterCategory": ["Apparel"],
-    "articleType": ["Dresses"],
+Example 1 - Explicit query:
+Query: "blue formal shirts for men under $100"
+{{
+    "gender": ["Men"],
+    "articleType": ["Shirts"],
     "baseColour": ["Blue"],
-    "price": {{"min": 0, "max": "inf"}},
-    "usage": ["Formal"],
-    "season": ["All seasons"]
-    }}
+    "price": {{"min": 0, "max": 100}},
+    "usage": ["Formal"]
+}}
 
-    Query: {query}
-    """
+Example 2 - Simple query:
+Query: "blue shirts under $50"
+{{
+    "articleType": ["Shirts"],
+    "baseColour": ["Blue"],
+    "price": {{"min": 0, "max": 50}}
+}}
+
+Query: {query}
+"""
         
         # Call LLM with low temperature (deterministic) and high max_tokens
         response = generate_with_single_input(
