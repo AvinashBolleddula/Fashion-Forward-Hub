@@ -363,7 +363,7 @@ Follow these steps to run the **Fashion Forward Hub RAG Chatbot** system locally
 ### 1️⃣ Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/fashion-forward-hub-rag.git
+git clone https://github.com/AvinashBolleddula/Fashion-Forward-Hub.git
 cd fashion-forward-hub-rag
 ```
 
